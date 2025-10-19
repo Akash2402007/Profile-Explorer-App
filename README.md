@@ -74,6 +74,8 @@ presentation/ - UI screens, widgets, providers (ViewModels)
 
 ✅ Responsive Layout: Works on various screen sizes and orientations
 
+
+
 🏗️ Architecture Implementation
 Clean Architecture Structure
 text
@@ -90,6 +92,9 @@ lib/
 ├── providers/user_provider.dart    # ViewModel (State Management)
 ├── screens/                        # UI Screens
 └── widgets/                        # Reusable Components
+
+
+
 State Management with Provider
 dart
 class UserProvider with ChangeNotifier {
