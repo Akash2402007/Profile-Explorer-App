@@ -21,32 +21,32 @@ class UserCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Stack(
         children: [
-          // Background Image
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              image: DecorationImage(
-                image: NetworkImage(user.picture),
-                fit: BoxFit.cover,
+          // Background Image (tappable for navigation)
+          InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: onTap,
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                image: DecorationImage(
+                  image: NetworkImage(user.picture),
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-          ),
-
-          // Gradient Overlay for better text readability
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  Colors.black.withOpacity(0.7),
-                ],
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.7),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -75,13 +75,21 @@ class UserCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    LikeButton(
-                      isLiked: user.isLiked,
-                      onTap: onLike,
-                      size: 18,
+                    // Like Button with its own tap handler
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: LikeButton(
+                        isLiked: user.isLiked,
+                        onTap: onLike,
+                        size: 18,
+                      ),
                     ),
                   ],
                 ),
+                const SizedBox(height: 4),
                 Text(
                   '${user.age} years • ${user.city}',
                   style: TextStyle(
@@ -92,17 +100,6 @@ class UserCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
-            ),
-          ),
-
-          // Tap Area for Navigation
-          Positioned.fill(
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(12),
-                onTap: onTap,
-              ),
             ),
           ),
         ],

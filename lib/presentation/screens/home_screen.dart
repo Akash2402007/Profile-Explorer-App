@@ -48,9 +48,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Row(
                       children: [
-                        const Icon(Icons.filter_list),
+                        const Icon(Icons.filter_list, color: Colors.black54),
                         const SizedBox(width: 4),
-                        Text(userProvider.selectedCountry),
+                        Text(
+                          userProvider.selectedCountry,
+                          style: const TextStyle(color: Colors.black54),
+                        ),
                       ],
                     ),
                   ),
@@ -65,7 +68,9 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, userProvider, child) {
           // Loading State
           if (userProvider.isLoading && userProvider.users.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
           // Error State
@@ -74,16 +79,66 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Error: ${userProvider.error}',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.red),
-                  ),
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
                   const SizedBox(height: 16),
+                  Text(
+                    'Failed to load users',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                    child: Text(
+                      userProvider.error,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: userProvider.fetchUsers,
-                    child: const Text('Retry'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('Try Again'),
                   ),
+                ],
+              ),
+            );
+          }
+
+          // Empty State (when filtering)
+          if (userProvider.filteredUsers.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.people_outline, size: 64, color: Colors.grey),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'No users found',
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                  ),
+                  if (userProvider.selectedCountry != 'All') ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      'No users from ${userProvider.selectedCountry}',
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    ),
+                    const SizedBox(height: 16),
+                    OutlinedButton(
+                      onPressed: () {
+                        userProvider.setSelectedCountry('All');
+                      },
+                      child: const Text('Show All Countries'),
+                    ),
+                  ],
                 ],
               ),
             );
@@ -92,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // Main Content with Pull to Refresh
           return RefreshIndicator(
             onRefresh: () async {
-              await userProvider.refreshUsers();
+              await userProvider.fetchUsers();
             },
             child: GridView.builder(
               padding: const EdgeInsets.all(16),
@@ -100,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
-                childAspectRatio: 0.7,
+                childAspectRatio: 0.7, // Perfect for your card design
               ),
               itemCount: userProvider.filteredUsers.length,
               itemBuilder: (context, index) {
